@@ -7,16 +7,21 @@ app = Flask(__name__)
 def home():
     return render_template("home.html")
 
-# Route for the Marketplace page (from previous request)
+# Route for the Marketplace page
 @app.route("/marketplace")
 def marketplace():
     return render_template("marketplace.html")
 
-# New route for the Complaint page
+# Route for the Complaint page
 @app.route("/complain")
 def complain():
-    # Renders the new complain.html page
     return render_template("complain.html")
+
+# New route for the Educational Library page
+@app.route("/library")
+def library():
+    # Renders the new library.html page
+    return render_template("library.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
