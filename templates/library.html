@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteWise - Educational Library</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        /* Main Section Styling */
+        .library-main {
+            padding: 50px 20px;
+            min-height: 85vh;
+        }
+
+        .library-section {
+            margin-bottom: 60px;
+        }
+
+        .library-section h2 {
+            color: #4caf50;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(76, 175, 80, 0.5);
+            padding-bottom: 10px;
+        }
+
+        /* Educational Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .edu-card {
+            background-color: #1a1a1a;
+            border: 1px solid #4caf50;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .edu-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(76, 175, 80, 0.05); /* Subtle green glow effect */
+            transform: rotate(45deg);
+            z-index: 1;
+            transition: transform 0.5s;
+        }
+
+        .edu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+        }
+        
+        .edu-card:hover::before {
+            transform: rotate(45deg) scale(1.1);
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .edu-card h3 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .edu-card p {
+            color: #ccc;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .edu-card .icon {
+            font-size: 3rem;
+            color: #4caf50;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        /* Navigation Bar - Optimized Flex Layout */
+.navbar {
+    background: rgba(5, 8, 5, 0.85);
+    backdrop-filter: blur(20px);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 50px rgba(76, 175, 80, 0.1);
+}
+
+.nav-glow-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #4caf50, transparent);
+    animation: glow-line-pulse 4s infinite ease-in-out;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px; /* Add gap between sections */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4caf50;
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    flex-shrink: 0; /* Prevents logo from shrinking */
+}
+
+.logo-svg {
+    width: 30px;
+    height: 30px;
+    margin-right: 8px;
+}
+
+/* Central Links Container */
+.nav-links-container {
+    display: flex;
+    gap: 15px; /* Spacing between links */
+    flex-grow: 1; /* Allows it to take up available space */
+    justify-content: center; /* Center the links */
+}
+
+.nav-link {
+    color: #e0e0e0;
+    text-decoration: none;
+    padding: 0.6rem 1rem;
+    border-radius: 5px;
+    transition: color 0.3s, background-color 0.3s, border-bottom 0.3s;
+    font-weight: 500;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #4caf50;
+    background-color: rgba(76, 175, 80, 0.1);
+    border-bottom: 2px solid #4caf50;
+}
+
+.nav-link.active {
+    font-weight: 700;
+}
+
+.nav-cta {
+    flex-shrink: 0; /* Prevents button area from shrinking */
+}
+
+/* Button Styling (Assuming this is already in style.css, ensure it's clean) */
+.btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    background-color: #4caf50;
+    color: #0a0e0a;
+}
+
+.btn-primary:hover {
+    background-color: #66bb6a;
+    transform: translateY(-1px);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 900px) {
+    /* Stack navigation items for better mobile view */
+    .nav-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 15px 20px;
+    }
+
+    .nav-links-container {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin: 10px 0;
+        gap: 5px; /* Tighter gap for stacked links */
+    }
+
+    .nav-link {
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+    }
+    
+    .nav-cta {
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-glow-line"></div>
+        <div class="nav-container">
+            <div class="logo">
+                <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4caf50;stop-opacity:1"/>
+                            <stop offset="100%" style="stop-color:#2e7d32;stop-opacity:1"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M50 10 L65 25 L60 25 L60 45 L70 45 L70 40 L85 55 L70 70 L70 65 L60 65 L60 85 L65 85 L50 100 L35 85 L40 85 L40 65 L30 65 L30 70 L15 55 L30 40 L30 45 L40 45 L40 25 L35 25 Z" 
+                          fill="url(#logoGradient)"/>
+                </svg>
+                WasteWise
+            </div>
+            <div class="nav-links-container">
+                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                <a href="/marketplace" class="nav-link">Marketplace</a>
+                <a href="/complain" class="nav-link">Report Issue</a>
+                <a href="/library" class="nav-link active">Library</a>
+            </div>
+            <div class="nav-cta">
+                <button class="btn btn-primary">Sign In</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="library-main container">
+        
+        <header style="text-align: center; margin-bottom: 60px;">
+            <h1 style="color: #fff; font-size: 3.5rem; margin-bottom: 10px;">📚 WasteWise Education Hub</h1>
+            <p style="color: #ccc; font-size: 1.2rem;">Learn how to manage waste smartly and contribute to a sustainable future.</p>
+        </header>
+
+        <section class="library-section">
+            <h2>The Core Principles: Reduce, Reuse, Recycle</h2>
+            <div class="card-grid">
+                
+                <article class="edu-card">
+                    <div class="card-content">
+                        <span class="icon">⬇️</span>
+                        <h3>Reduce</h3>
+                        <p>The most important 'R'. It means **minimizing the amount of waste** you create in the first place. Choose products with less packaging, buy bulk, and avoid single-use plastics.</p>
+                    </div>
+                </article>
+
+                <article class="edu-card">
+                    <div class="card-content">
+                        <span class="icon">🔄</span>
+                        <h3>Reuse</h3>
+                        <p>Before throwing something away, find a way to **use it again**. This includes donating old clothes, using jars as containers, and repurposing items for crafts or new functions.</p>
+                    </div>
+                </article>
+
+                <article class="edu-card">
+                    <div class="card-content">
+                        <span class="icon">♻️</span>
+                        <h3>Recycle</h3>
+                        <p>Turning waste materials into **new products** to prevent the consumption of fresh raw materials. Ensure you know your local rules for separating plastics, paper, glass, and metals.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="library-section">
+            <h2>Did You Know? Quick Facts & Impact</h2>
+            <div class="card-grid">
+                
+                <article class="edu-card">
+                    <div class="card-content">
+                        <span class="icon">⚡</span>
+                        <h3>Aluminium Power</h3>
+                        <p>Recycling aluminum saves **95% of the energy** required to produce the same amount of metal from raw ore. A can is back on the shelf in as little as 60 days!</p>
+                    </div>
+                </article>
+
+                <article class="edu-card">
+                    <div class="card-content">
+                        <span class="icon">🌳</span>
+                        <h3>Save Trees, Save Water</h3>
+                        <p>Recycling one ton of paper saves about **17 mature trees** and 7,000 gallons of water. Always shred sensitive documents before recycling to maintain privacy.</p>
+                    </div>
+                </article>
+
+                <article class="edu-card">
+                    <div class="card-content">
+                        <span class="icon">🌊</span>
+                        <h3>Plastic Longevity</h3>
+                        <p>Most plastics take between **400 to 1,000 years** to decompose in landfills. Correct sorting is crucial, as different plastic types (PET, HDPE, etc.) require different processing.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-section">
+                <h3>WasteWise</h3>
+                <p>Transforming waste management through innovation and community collaboration.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/marketplace">Marketplace</a></li>
+                    <li><a href="/wastebot">WasteWise Bot</a></li>
+                    <li><a href="/complain">Report Issue</a></li>
+                    <li><a href="/library">Library</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Email: support@wastewise.com</p>
+                <p>Phone: +91 123 456 7890</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
