@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteWise - Report Issue</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        /* Main Section Styling */
+        .complain-main {
+            min-height: 85vh;
+            padding: 50px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Form Container */
+        .complain-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #1a1a1a;
+            border: 1px solid #4caf50;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.2);
+        }
+
+        .complain-container h2 {
+            color: #4caf50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        /* Form Elements */
+        .complain-form label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        .complain-form input[type="text"],
+        .complain-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+            background-color: #0a0e0a;
+            color: #fff;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        /* File Upload Styling */
+        .complain-form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #4caf50;
+            background-color: #121212;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .complain-form input[type="file"]::-webkit-file-upload-button {
+            background: #4caf50;
+            color: #0a0e0a;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 15px;
+            font-weight: 600;
+        }
+        
+        /* Submit Button */
+        .btn-submit-complain {
+            background-color: #4caf50;
+            color: #0a0e0a;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 700;
+            margin-top: 25px;
+            width: 100%;
+            font-size: 1.1rem;
+        }
+        
+        .btn-submit-complain:hover {
+            background-color: #66bb6a;
+        }
+
+        /* --- TOAST NOTIFICATION STYLING --- */
+        #toast-notification {
+            visibility: hidden; /* Hidden by default */
+            min-width: 300px;
+            background-color: #4caf50; /* Green success color */
+            color: #0a0e0a;
+            text-align: center;
+            border-radius: 5px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1001; /* Above everything else */
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 17px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            font-weight: 600;
+        }
+
+        /* Show the toast (active class) */
+        #toast-notification.show {
+            visibility: visible;
+            /* Fade in and slide up animation */
+            animation: fadein 0.5s, slideup 0.5s, fadeout 0.5s 4.5s;
+        }
+
+        /* Animations for toast */
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;} 
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes slideup {
+            from {transform: translateX(-50%) translateY(20px);} 
+            to {transform: translateX(-50%) translateY(0);}
+        }
+
+        @keyframes fadeout {
+            from {opacity: 1;} 
+            to {opacity: 0;}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-glow-line"></div>
+        <div class="nav-container">
+            <div class="logo">
+                <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4caf50;stop-opacity:1"/>
+                            <stop offset="100%" style="stop-color:#2e7d32;stop-opacity:1"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M50 10 L65 25 L60 25 L60 45 L70 45 L70 40 L85 55 L70 70 L70 65 L60 65 L60 85 L65 85 L50 100 L35 85 L40 85 L40 65 L30 65 L30 70 L15 55 L30 40 L30 45 L40 45 L40 25 L35 25 Z" 
+                          fill="url(#logoGradient)"/>
+                </svg>
+                WasteWise
+            </div>
+            <div class="nav-links-container">
+                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                <a href="/marketplace" class="nav-link">Marketplace</a>
+                <a href="/complain" class="nav-link active">Report Issue</a>
+            </div>
+            <div class="nav-cta">
+                <button class="btn btn-primary">Sign In</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="complain-main">
+        <div class="complain-container">
+            <h2>⚠️ Report an Issue</h2>
+            <p style="text-align:center; color:#ccc; margin-bottom: 20px;">Help us keep your community clean by reporting waste and sanitation issues.</p>
+            
+            <form id="complain-form" class="complain-form">
+                
+                <label for="photo">Upload Photo of the Issue (Max 5MB):</label>
+                <input type="file" id="photo" name="photo" accept="image/*" required>
+
+                <label for="address">Location / Address of the Issue:</label>
+                <input type="text" id="address" name="address" placeholder="e.g., Near ABC Park, Sector 14" required>
+
+                <label for="complain-details">Complaint Details:</label>
+                <textarea id="complain-details" name="complain-details" rows="5" placeholder="Please describe the issue in detail (e.g., large pile of debris, overflowing bin, etc.)" required></textarea>
+
+                <button type="submit" class="btn-submit-complain">Send Complaint</button>
+            </form>
+        </div>
+    </main>
+
+    <div id="toast-notification">
+        Complain sent to nearest MCD! We'll reach you under 24 hrs.
+    </div>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-section">
+                <h3>WasteWise</h3>
+                <p>Transforming waste management through innovation and community collaboration.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/marketplace">Marketplace</a></li>
+                    <li><a href="/wastebot">WasteWise Bot</a></li>
+                    <li><a href="/complain">Report Issue</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Email: support@wastewise.com</p>
+                <p>Phone: +91 123 456 7890</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        document.getElementById('complain-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Stop the default form submission
+            
+            // In a real application, you would send the form data (including the image file)
+            // to a backend server using Fetch API or XMLHttpRequest here.
+            
+            // For this example, we simulate a successful submission.
+            
+            // 1. Show the Toast
+            const toast = document.getElementById("toast-notification");
+            toast.className = "show"; // Adds the 'show' class for animation
+            
+            // 2. Hide the Toast after 5 seconds (5000 milliseconds)
+            setTimeout(function(){ 
+                toast.className = toast.className.replace("show", ""); 
+            }, 5000);
+
+            // 3. Optional: Reset the form fields
+            this.reset();
+        });
+    </script>
+</body>
+</html>
